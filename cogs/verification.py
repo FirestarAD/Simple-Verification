@@ -134,10 +134,17 @@ If you get it wrong just click the verify button again and retry"""), colour=0xa
                                 try:
                                     await ctx.user.send(embed=embed, file=nextcord.File(f"{ctx.user.id}-captcha.jpg"))
                                     await ctx.send("Complete the captcha I have sent in our DMs to verify.")
-                                    os.remove(f"{ctx.user.id}-captcha.jpg")
-                                    def check(msg):
-                                        return msg.author.id == ctx.user.id and msg.guild == None
-                                    result_str = result_str.replace(" ", "")
+
+                                except Exception as e:
+                                    print(e)
+                                    await ctx.send(embed=embed, file=nextcord.File(f"{ctx.user.id}-captcha.jpg"))
+                                    await ctx.send("Send your answer to me through dms")
+                                    
+                                os.remove(f"{ctx.user.id}-captcha.jpg")
+                                def check(msg):
+                                    return msg.author.id == ctx.user.id and msg.guild == None
+                                result_str = result_str.replace(" ", "")
+                                try:
                                     answer = await self.client.wait_for('message', check=check, timeout=120)
                                     if answer.content == result_str:
                                         embed =nextcord.Embed(title="Verification", description=f"{ctx.user.mention} has successfully verified", colour=0xadd8e6)
@@ -193,15 +200,6 @@ If you get it wrong just click the verify button again and retry"""), colour=0xa
                                     except:
                                         await ctx.send("You ran out of time to answer the captcha, please try again.", ephemeral=True)
 
-                                    
-
-                                except Exception as e:
-                                    print(e)
-                                    await ctx.send("Couldn't DM you the captcha, make sure you have your DMs enabled for the server.", ephemeral=True)
-                                    try:
-                                        os.remove(f"{ctx.user.id}-captcha.jpg")
-                                    except:
-                                        pass
                             else:
                                 await ctx.send("You are already verified", ephemeral=True)
                         except Exception as e:
